@@ -10,13 +10,13 @@ jobs:
     continue-on-error: true
     strategy:
       matrix:
-        os: [ubuntu-18.04, windows-2019, macos-10.15, ubuntu-20.04]
+        os: [windows-2019, macos-11, ubuntu-20.04]
         version: [0.36.0]
         arch: [amd64, i386]
         exclude:
           - os: windows-2019
             arch: i386
-          - os: macos-10.15
+          - os: macos-11
             arch: i386
         node-version: [16]
 
