@@ -1,8 +1,9 @@
 name: chain.js Package
 
 on:
-  release:
-    types: [published]
+  push
+  # release:
+  #   types: [published]
 
 jobs:
   test:
@@ -10,13 +11,13 @@ jobs:
     continue-on-error: true
     strategy:
       matrix:
-        os: [ubuntu-18.04, windows-2019, macos-10.15, ubuntu-20.04]
+        os: [windows-2019, macos-11, ubuntu-20.04]
         version: [0.36.0]
         arch: [amd64, i386]
         exclude:
           - os: windows-2019
             arch: i386
-          - os: macos-10.15
+          - os: macos-11
             arch: i386
         node-version: [16]
 
@@ -70,15 +71,15 @@ jobs:
           RELEASE_TAG: ${{ steps.set-env-vars.outputs.RELEASE_TAG }}
           GIT_TAG: ${{ steps.set-env-vars.outputs.GIT_TAG }}
 
-  publish-npm:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          registry-url: https://registry.npmjs.org/
-      - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+  # publish-npm:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 16
+  #         registry-url: https://registry.npmjs.org/
+  #     - run: npm publish
+  #       env:
+  #         NODE_AUTH_TOKEN: ${{secrets.npm_token}}
