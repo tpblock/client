@@ -5,13 +5,70 @@ on:
     types: [published]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  test:
+    runs-on: ${{ matrix.os }}
+    continue-on-error: true
+    strategy:
+      matrix:
+        os: [ubuntu-18.04, windows-2019, macos-10.15, ubuntu-20.04]
+        version: [0.36.0]
+        arch: [amd64, i386]
+        exclude:
+          - os: windows-2019
+            arch: i386
+          - os: macos-10.15
+            arch: i386
+        node-version: [16]
+
     steps:
-      - uses: actions/checkout@v3
-      - run: curl -s http://fibjs.org/download/installer.sh | sh
-      - run: npm install
-      - run: npm test
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+        with:
+          submodules: 'recursive'
+      
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+        
+      - name: Set Env Variables
+        id: set-env-vars
+        shell: bash
+        run: |
+          bash .github/workflows/set-env-vars.sh
+        env:
+          ARCH: ${{ matrix.arch }}
+          OS: ${{ matrix.os }}
+
+      - name: Install FIBJS
+        shell: bash
+        run: |
+          mkdir -p ./node_modules/.bin;
+          rm -rf ./node_modules/.bin/fibjs;
+          if [[ "$RUNNER_OS" == "Linux" ]]; then
+            curl -SL "https://github.com/fibjs/fibjs/releases/download/v${FIBJS_VERSION}/fibjs-v${FIBJS_VERSION}-${FIBJS_OS}-${FIBJS_ARCH}.xz" -o ./node_modules/.bin/fibjs.xz;
+            xz -d ./node_modules/.bin/fibjs.xz;
+            chmod a+x ./node_modules/.bin/fibjs;
+          elif [[ "$RUNNER_OS" == "macOS" ]]; then
+            curl -SL "https://github.com/fibjs/fibjs/releases/download/v${FIBJS_VERSION}/fibjs-v${FIBJS_VERSION}-${FIBJS_OS}-${FIBJS_ARCH}" -o ./node_modules/.bin/fibjs;
+            chmod a+x ./node_modules/.bin/fibjs;
+          else
+            curl -SL "https://github.com/fibjs/fibjs/releases/download/v${FIBJS_VERSION}/fibjs-v${FIBJS_VERSION}-${FIBJS_OS}-${FIBJS_ARCH}.exe" -o ./node_modules/.bin/fibjs.exe;
+          fi
+        env:
+          FIBJS_OS: ${{ steps.set-env-vars.outputs.FIBJS_OS }}
+          FIBJS_ARCH: ${{ steps.set-env-vars.outputs.FIBJS_ARCH }}
+          FIBJS_VERSION: ${{ matrix.version }}    
+      
+      - name: Run CI
+        shell: bash
+        run: |
+            npm install;
+            npm run test;
+        env:
+          FIBJS_OS: ${{ steps.set-env-vars.outputs.FIBJS_OS }}
+          GIT_BRANCH: ${{ steps.set-env-vars.outputs.GIT_BRANCH }}
+          RELEASE_TAG: ${{ steps.set-env-vars.outputs.RELEASE_TAG }}
+          GIT_TAG: ${{ steps.set-env-vars.outputs.GIT_TAG }}
 
   publish-npm:
     needs: build
