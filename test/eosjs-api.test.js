@@ -251,12 +251,30 @@ describe('eosjs-api', () => {
             assert.deepEqual(serializedAbi, raw);
         });
 
+        it('abi_definition the 1.1 abi', () => {
+            var raw = base64ToBinary(serializedAbis['1.1']);
+            var deserializedAbi = api.rawAbiToJson(raw);
+            delete deserializedAbi['variants'];
+            delete deserializedAbi['error_messages'];
+            var serializedAbi = api.jsonToRawAbi(api.abi_definition(deserializedAbi));
+            assert.deepEqual(serializedAbi, raw);
+        })
+
         it('deserializes/serializes the 1.2 abi', () => {
             var raw = base64ToBinary(serializedAbis['1.2']);
             var deserializedAbi = api.rawAbiToJson(raw);
             var serializedAbi = api.jsonToRawAbi(deserializedAbi);
             assert.deepEqual(serializedAbi, raw);
         });
+
+        it(`abi_definition the 1.2 abi`, () => {
+            var raw = base64ToBinary(serializedAbis['1.2']);
+            var deserializedAbi = api.rawAbiToJson(raw);
+            delete deserializedAbi['variants'];
+            delete deserializedAbi['error_messages'];
+            var serializedAbi = api.jsonToRawAbi(api.abi_definition(deserializedAbi));
+            assert.deepEqual(serializedAbi, raw);
+        })
     });
 
     describe('Api shorthand design (JsonAbi)', () => {

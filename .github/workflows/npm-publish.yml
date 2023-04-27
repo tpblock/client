@@ -1,7 +1,7 @@
 name: chain.js Package
 
 on:
-  release:
+  release: 
     types: [published]
 
 jobs:
