@@ -1,10 +1,12 @@
 {
   "name": "@tpblock/client",
-  "version": "0.23.11",
+  "version": "0.23.12",
   "description": "General purpose library for TPOS blockchain",
   "main": "./lib/index.js",
   "browser": "./lib/node.js",
   "license": "MIT",
+  "repository": "git@github.com:tpblock/client.git",
+  "homepage": "https://github.com/tpblock/client",
   "keywords": [
     "blockchain",
     "tpblock",
