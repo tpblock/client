@@ -1,6 +1,6 @@
 {
   "name": "@tpblock/client",
-  "version": "0.23.14",
+  "version": "0.24.1",
   "description": "General purpose library for TPOS blockchain",
   "main": "./lib/index.js",
   "browser": "./lib/node.js",
@@ -20,7 +20,9 @@
   },
   "dependencies": {
     "eosjs": "22.1",
-    "web3": "1.8.1"
+    "web3": "1.8.1",
+    "web3-core": "^1.8.1",
+    "web3-eth-abi": "^1.8.1"
   },
   "directories": {
     "lib": "lib",
